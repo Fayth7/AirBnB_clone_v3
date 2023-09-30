@@ -17,6 +17,18 @@ def teardown_appcontext(exception):
     """Closes the storage on teardown."""
     storage.close()
 
+@app_views.route('/api/v1/stats', methods=['GET'])
+def get_stats():
+    """Retrieves the count of each object by type"""
+    stats = {
+        "amenities": storage.count("Amenity"),
+        "cities": storage.count("City"),
+        "places": storage.count("Place"),
+        "reviews": storage.count("Review"),
+        "states": storage.count("State"),
+        "users": storage.count("User")
+    }
+    return jsonify(stats)
 
 @app.errorhandler(404)
 def not_found(error):
