@@ -1,15 +1,18 @@
 #!/usr/bin/python3
 """app for registering blueprint and starting flask"""
 
-import os
-from flask import Flask, jsonify
+from flask import Flask, make_response, jsonify
 from models import storage
 from api.v1.views import app_views
+from os import getenv
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/api/*": {"origins": "0.0.0.0"}})
 
 # Register the blueprint
 app.register_blueprint(app_views)
+app.url_map.strict_slashes = False
 
 
 @app.teardown_appcontext
@@ -17,18 +20,6 @@ def teardown_appcontext(exception):
     """Closes the storage on teardown."""
     storage.close()
 
-@app_views.route('/api/v1/stats', methods=['GET'])
-def get_stats():
-    """Retrieves the count of each object by type"""
-    stats = {
-        "amenities": storage.count("Amenity"),
-        "cities": storage.count("City"),
-        "places": storage.count("Place"),
-        "reviews": storage.count("Review"),
-        "states": storage.count("State"),
-        "users": storage.count("User")
-    }
-    return jsonify(stats)
 
 @app.errorhandler(404)
 def not_found(error):
@@ -36,6 +27,12 @@ def not_found(error):
     return jsonify({"error": "Not found"}), 404
 
     if __name__ == "__main__":
-        host = os.getenv("HBNB_API_HOST", "0.0.0.0")
-        port = int(os.getenv("HBNB_API_PORT", 5000))
-        app.run(host=host, port=port, threaded=True)
+        if getenv("HBNB_API_HOST") is None:
+            HBNB_API_HOST = '0.0.0.0'
+        else:
+            HBNB_API_HOST = getenv("HBNB_API_HOST")
+        if getenv("HBNB_API_PORT") is None:
+            HBNB_API_PORT = 5000
+        else:
+            HBNB_API_PORT = int(getenv("HBNB_API_PORT"))
+        app.run(host=HBNB_API_HOST, port=HBNB_API_PORT, threaded=True)
