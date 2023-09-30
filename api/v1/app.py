@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify, make_response
 from models import storage
 from api.v1.views import app_views
+from os import getenv
 
 app = Flask(__name__)
 
@@ -17,9 +18,9 @@ def teardown_appcontext(exception):
 @app.errorhandler(404)
 def not_found(error):
     """Custom 404 error handler."""
-    return jsonify({"error": "Not found"}), 404
+    return make_response(jsonify({"error": "Not found"}), 404)
 
-    if __name__ == "__main__":
-        host = os.getenv("HBNB_API_HOST", "0.0.0.0")
-        port = int(os.getenv("HBNB_API_PORT", 5000))
-        app.run(host=host, port=port, threaded=True)
+if __name__ == "__main__":
+    host = getenv("HBNB_API_HOST", default="0.0.0.0")
+    port = int(getenv("HBNB_API_PORT", default=5000))
+    app.run(host=host, port=port, threaded=True)
