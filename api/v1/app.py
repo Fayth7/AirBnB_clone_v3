@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """app for registering blueprint and starting flask"""
-from flask import Flask
+
+import os
+from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 
