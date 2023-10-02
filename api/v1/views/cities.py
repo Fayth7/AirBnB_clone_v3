@@ -2,9 +2,6 @@
 '''
     RESTful API for class City
 '''
-#!/usr/bin/python3
-"""Create a view for city"""
-
 from flask import jsonify, request, abort, make_response
 from api.v1.views import app_views
 from models import storage
