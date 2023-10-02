@@ -8,11 +8,8 @@ from os import getenv
 from flask_cors import CORS
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "0.0.0.0"}})
-
-# Register the blueprint
+cors = CORS(app, resources={r"api/v1/*": {"origin": "*"}})
 app.register_blueprint(app_views)
-app.url_map.strict_slashes = False
 
 
 @app.teardown_appcontext
@@ -26,7 +23,7 @@ def not_found(error):
     """Custom 404 error handler."""
     return jsonify({"error": "Not found"}), 404
 
-    if __name__ == "__main__":
+    if __name__ == '__main__':
         if getenv("HBNB_API_HOST") is None:
             HBNB_API_HOST = '0.0.0.0'
         else:
